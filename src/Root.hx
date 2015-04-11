@@ -30,11 +30,6 @@ class Root extends Sprite {
     	assets = new AssetManager();
     	
     	//tilemap
-		assets.enqueue("assets/skyone.png");
-		assets.enqueue("assets/skytwo.png");
-		assets.enqueue("assets/skythree.png");
-		assets.enqueue("assets/dirtBlock.png");
-		assets.enqueue("assets/cloud.png");
 		assets.enqueue("assets/Bricks.png");
 
         assets.enqueue("assets/ninja.png");
@@ -49,17 +44,21 @@ class Root extends Sprite {
                         onComplete: function() {
                         startup.removeChild(startup.loadingBitmap);
                         ninja = new Image(Root.assets.getTexture("ninja"));
-                        ninja.x = 100;
-                        ninja.y = 0;
-                        addChild(ninja);
+                        ninja.x = 640;
+                        ninja.y = 360;
                         
                         // Load tilemap
 						tmx = new Tilemap(Root.assets, "levelone");
 						addChild(tmx);
+						addChild(ninja);
+						
+						//if(checkCollision(ninja, tmx)){
+							
+       					//	}
                         
                         Starling.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, 
                         	function(event:KeyboardEvent){
-                        		trace(event.keyCode);
+                        		//trace(event.keyCode);
                         		if(event.keyCode == Keyboard.LEFT){
                         			ninja.x -= 10;
                         			}
@@ -87,6 +86,7 @@ class Root extends Sprite {
                                 delay: 2.0,
                                 y: 250
                                 });
+                                
                         stage.addEventListener(Event.ENTER_FRAME, movecam);
 
                     }
@@ -97,6 +97,8 @@ class Root extends Sprite {
         });
         
     }
+    
+    // Camera function
     private function movecam(event:Event){
 
 		var ox = stage.stage.width/2;
@@ -104,10 +106,16 @@ class Root extends Sprite {
 	
 		tmx.x = -(Math.min(Math.max((ninja.x), ox), tmx.width - ox) )+ (stage.stage.width/2);
 		tmx.y = -(Math.min(Math.max((ninja.y), oy), tmx.height - oy))+(stage.stage.height/2);
-		tmx.x = -(ninja.x - 40);
-		tmx.y = -(ninja.y - 40);
+		tmx.x = -(ninja.x - 0);
+		tmx.y = -(ninja.y - 0);
 
-}
+	}
+	
+	// Check Collision
+    private function checkCollision(texture1:Image, texture2:Rectangle):Bool {
+        return (texture1.bounds.intersects(texture2));
+    }
+
 
 
 }
