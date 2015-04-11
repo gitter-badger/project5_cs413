@@ -7,19 +7,36 @@ import starling.events.KeyboardEvent;
 import flash.ui.Keyboard;
 import starling.events.TouchEvent;
 import starling.events.TouchPhase;
+import starling.events.Event;
+import starling.utils.RectangleUtil;
+import flash.geom.Rectangle;
+
+import Tilemap;
 
 class Root extends Sprite {
 
     public static var assets:AssetManager;
     public var ninja:Image;
+    
+	//For the tilemap
+	var tmx:Tilemap;
 
     public function new() {
         super();
     }
 
     public function start(startup:Startup) {
+    
+    	assets = new AssetManager();
+    	
+    	//tilemap
+		assets.enqueue("assets/skyone.png");
+		assets.enqueue("assets/skytwo.png");
+		assets.enqueue("assets/skythree.png");
+		assets.enqueue("assets/dirtBlock.png");
+		assets.enqueue("assets/cloud.png");
+		assets.enqueue("assets/Bricks.png");
 
-        assets = new AssetManager();
         assets.enqueue("assets/ninja.png");
         assets.loadQueue(function onProgress(ratio:Float) {
 
@@ -36,6 +53,10 @@ class Root extends Sprite {
                         ninja.y = 0;
                         addChild(ninja);
                         
+                        // Load tilemap
+						tmx = new Tilemap(Root.assets, "levelone");
+						addChild(tmx);
+                        
                         Starling.current.stage.addEventListener(KeyboardEvent.KEY_DOWN, 
                         	function(event:KeyboardEvent){
                         		trace(event.keyCode);
@@ -46,6 +67,12 @@ class Root extends Sprite {
                         		if(event.keyCode == Keyboard.RIGHT){
                         			ninja.x += 10;
                         			}
+                        		if(event.keyCode == Keyboard.UP){
+                        			ninja.y -= 10;
+                        		}
+                        		if(event.keyCode == Keyboard.DOWN){
+                        			ninja.y += 10;
+                        		}
                         	});
                         	
                         	ninja.addEventListener(TouchEvent.TOUCH, 
@@ -60,6 +87,7 @@ class Root extends Sprite {
                                 delay: 2.0,
                                 y: 250
                                 });
+                        stage.addEventListener(Event.ENTER_FRAME, movecam);
 
                     }
 
@@ -67,6 +95,19 @@ class Root extends Sprite {
             }
 
         });
+        
     }
+    private function movecam(event:Event){
+
+		var ox = stage.stage.width/2;
+		var oy = stage.stage.height/2;
+	
+		tmx.x = -(Math.min(Math.max((ninja.x), ox), tmx.width - ox) )+ (stage.stage.width/2);
+		tmx.y = -(Math.min(Math.max((ninja.y), oy), tmx.height - oy))+(stage.stage.height/2);
+		tmx.x = -(ninja.x - 40);
+		tmx.y = -(ninja.y - 40);
+
+}
+
 
 }
